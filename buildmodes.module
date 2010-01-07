@@ -1,0 +1,59 @@
+<?php
+
+function buildmodes_menu() {
+  $items = array();
+  
+  $items['admin/build/buildmodes'] = array(
+    'title' => 'Build modes',
+    'description' => 'List, edit, or add build modes to your nodes',
+    'page callback' => 'buildmodes_overview',
+    'access arguments' => array('administer buildmodes'),
+    'file' => 'buildmodes.admin.inc',
+  );
+  $items['admin/build/buildmodes/new'] = array(
+    'title' => 'New build mode',
+    'description' => 'Add a new build mode',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('buildmodes_new_form'),
+    'access arguments' => array('administer buildmodes'),
+    'file' => 'buildmodes.admin.inc',
+  );
+  return $items;
+}
+
+function buildmodes_content_build_modes() {
+  $buildmodes = array(
+    'buildmodes' => array(
+      'title' => t('Build modes'),
+    ),
+  );
+  $buildmodes['buildmodes']['build modes'] = buildmodes_list_modes();
+  return $buildmodes;
+}
+
+function buildmodes_list_modes() {
+  return variable_get('buildmodes_modes', array());
+  // return array(
+  //   'featured' => array(
+  //     'title' => t('Featured'),
+  //     'views style' => TRUE,
+  //   ),
+  //   'featured2' => array(
+  //     'title' => t('Featured 2'),
+  //     'views style' => TRUE,
+  //   ),
+  // );
+}
+
+// $modes = module_invoke('content', 'build_modes');
+// dpm($modes);
+
+
+
+function buildmodes_preprocess_node(&$vars) {
+  // dpm($vars);
+}
+
+function buildmodes_db_rewrite_sql($query, $primary_table, $primary_field, $args) {
+  //dpm($query);
+}

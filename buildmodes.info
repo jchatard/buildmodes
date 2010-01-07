@@ -1,0 +1,5 @@
+name = Build modes
+description = Allows user to define new build modes for nodes
+package = Content
+core = 6.x
+dependencies[] = content
