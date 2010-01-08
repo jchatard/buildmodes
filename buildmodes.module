@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Implementation of hook_menu()
+ */
 function buildmodes_menu() {
   $items = array();
   
@@ -10,50 +13,83 @@ function buildmodes_menu() {
     'access arguments' => array('administer buildmodes'),
     'file' => 'buildmodes.admin.inc',
   );
+  $items['admin/build/buildmodes/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  
   $items['admin/build/buildmodes/new'] = array(
-    'title' => 'New build mode',
+    'title' => 'Add build mode',
     'description' => 'Add a new build mode',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('buildmodes_new_form'),
+    'page arguments' => array('buildmodes_form'),
+    'access arguments' => array('administer buildmodes'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'buildmodes.admin.inc',
+  );
+  $items['admin/build/buildmodes/edit/%'] = array(
+    'title' => 'Edit build mode',
+    'description' => 'Edit a build mode',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('buildmodes_form', 4),
+    'access arguments' => array('administer buildmodes'),
+    'file' => 'buildmodes.admin.inc',
+  );
+  $items['admin/build/buildmodes/delete/%'] = array(
+    'title' => 'Delete build mode',
+    'description' => 'Delete a build mode',
+    'page arguments' => array('buildmodes_delete_confirm', 4),
     'access arguments' => array('administer buildmodes'),
     'file' => 'buildmodes.admin.inc',
   );
   return $items;
 }
 
+/**
+ * Implementation of hook_content_build_modes()
+ * from content.module (CCK)
+ */
 function buildmodes_content_build_modes() {
   $buildmodes = array(
     'buildmodes' => array(
       'title' => t('Build modes'),
     ),
   );
+
   $buildmodes['buildmodes']['build modes'] = buildmodes_list_modes();
+
   return $buildmodes;
 }
 
-function buildmodes_list_modes() {
-  return variable_get('buildmodes_modes', array());
-  // return array(
-  //   'featured' => array(
-  //     'title' => t('Featured'),
-  //     'views style' => TRUE,
-  //   ),
-  //   'featured2' => array(
-  //     'title' => t('Featured 2'),
-  //     'views style' => TRUE,
-  //   ),
-  // );
+/**
+ * Returns the list of user defined build modes
+ * 
+ * @param $reset
+ *   (optional) Refresh the static variable?
+ * @return
+ *   Array TODO
+ */
+function buildmodes_list_modes($reset = FALSE) {
+  static $buildmodes;
+
+  if ($reset || !isset($buildmodes)) {
+    $buildmodes = variable_get('buildmodes_modes', array());
+    // For convinience prupose we sort by alpha keys
+    ksort($buildmodes);
+  }
+
+  return $buildmodes;
 }
 
-// $modes = module_invoke('content', 'build_modes');
-// dpm($modes);
-
-
-
+/**
+ * Preprocess function for template suggestions
+ */
 function buildmodes_preprocess_node(&$vars) {
-  // dpm($vars);
-}
-
-function buildmodes_db_rewrite_sql($query, $primary_table, $primary_field, $args) {
-  //dpm($query);
+  if ($vars['build_mode']) {
+    // TODO prereg replace '_' -> '-'
+    // populate build_mode with teaser and full?
+    $vars['template_files'][] = 'node-'. $vars['build_mode'];
+    $vars['template_files'][] = 'node-'. $vars['type'] .'-'. $vars['build_mode'];
+  }
 }
