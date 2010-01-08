@@ -1,30 +1,46 @@
 <?php
 
+/**
+ * Lists all build modes user created
+ */
 function buildmodes_overview() {
-  $header = array(t('Build modes'), t('Operations'));
+  $header = array(t('Build modes'), '', t('Operations'));
   $rows = array();
 
-  //foreach (variable_get('buildmodes_modes', array()) as $key => $value) {
   foreach (buildmodes_list_modes() as $key => $mode) {
     if ($mode['views style'] == TRUE) {
-      $views_enabled = t('Views integration is <span class=\'admin-enabled\'>On</span>');
+      $views_enabled = t('Views integration: <span class=\'admin-enabled\'>On</span>');
     }
     else {
-      $views_enabled = t('Views integration is <span class=\'admin-disabled\'>Off</span>');
+      $views_enabled = t('Views integration: <span class=\'admin-disabled\'>Off</span>');
     }
+
+    $title       = '<strong>'. $mode['title'] .'</strong>';
+    $system_name = '<small class=\'description\'>'. t('System name:') .' '. $key .' <br />';
+    $templates   = '<br />'. t('Template suggestions:') .' node-<em>content_type</em>-'. $key .', node-'. $key .'</small>';
+
+    $operations  = l(t('edit'),   'admin/build/buildmodes/edit/'  . $key) .' ';
+    $operations .= l(t('delete'), 'admin/build/buildmodes/delete/'. $key);
+
     $rows[] = array(
-      "<strong>". $mode['title'] ."</strong><br /><small>System name: $key <br />$views_enabled</small>",
-      l(t('edit'), 'admin/build/buildmodes/edit/'. $key),
+      $title,
+      $system_name . $views_enabled . $templates,
+      $operations,
     );
   }
 
   $output = theme('table', $header, $rows, $attributes = array(), $caption = NULL);
   $output .= l('+ '. t('Add a new build mode'), 'admin/build/buildmodes/new');
-  
+
   return $output;
 }
 
-function buildmodes_new_form() {
+function buildmodes_form(&$form_state, $name = NULL) {
+  if ($name) {
+    $build_modes = buildmodes_list_modes();
+    $edit = $build_modes[$name];
+  }
+
   $form = array();
 
   $form['title'] = array(
@@ -32,6 +48,7 @@ function buildmodes_new_form() {
     '#required' => TRUE,
     '#title' => t('Build mode title'),
     '#description' => t('The human readable build mode title'),
+    '#default_value' => $edit['title'] ? $edit['title'] : '',
   );
   
   $form['name'] = array(
@@ -39,7 +56,16 @@ function buildmodes_new_form() {
     '#required' => TRUE,
     '#title' => t('Build mode system name'),
     '#description' => t('The machine readable build mode name. This name must contain only lowercase letters, numbers, and underscores.'),
+    '#default_value' => $name ? $name : '',
   );
+  
+  if ($name) {
+    $form['old_name'] = array(
+      '#type' => 'hidden',
+      '#required' => TRUE,
+      '#value' => $name,
+    );
+  }
   
   if (module_exists('views')) {
     $form['views'] = array(
@@ -49,6 +75,7 @@ function buildmodes_new_form() {
       '#options' => array(
         'views style' => t('Enable Views integration'),
       ),
+      '#default_value' => array($edit['views style'] ? 'views style' : NULL),
     );
   }
   
@@ -56,14 +83,19 @@ function buildmodes_new_form() {
     '#type' => 'submit',
     '#value' => t('Save'),
   );
-
-  $form['#validate'][] = 'buildmodes_new_validate';
-  $form['#submit'][]   = 'buildmodes_new_submit';
+  // $form['delete'] = array(
+  //   '#type' => 'submit',
+  //   '#value' => t('Delete'),
+  //   '#weight' => 2,
+  //   '#submit' => array('buildmodes_delete_confirm'),
+  // );
+  $form['#validate'][] = 'buildmodes_validate';
+  $form['#submit'][]   = 'buildmodes_submit';
 
   return $form;
 }
 
-function buildmodes_new_validate($form, &$form_state) {
+function buildmodes_validate($form, &$form_state) {
   $title = trim($form_state['values']['title']);
   $name  = trim($form_state['values']['name']);
 
@@ -71,16 +103,27 @@ function buildmodes_new_validate($form, &$form_state) {
     form_set_error('name', t('The machine-readable name must contain only lowercase letters, numbers, and underscores.'));
   }
   
-  $types = buildmodes_list_modes();
+  $buildmodes = buildmodes_list_modes();
 
-  if (isset($types[$name])) {
+  if ($name == 'teaser' || $name == 'full') {
+    // TODO check for other modules defined build modes like rss, search, etc?
+    form_set_error('name', t('The machine-readable name %name is reserved to Drupal core.', array('%name' => $name)));
+  }
+
+  if (isset($buildmodes[$name]) && !isset($form_state['values']['old_name'])) {
     form_set_error('name', t('The machine-readable name %name is already taken.', array('%name' => $name)));
   }
-  
+  elseif (isset($buildmodes[$name]) && isset($types[$form_state['values']['old_name']]) && $name != $form_state['values']['old_name']) {
+    form_set_error('name', t('The machine-readable name %name is already taken.', array('%name' => $name)));
+  }
 }
 
-function buildmodes_new_submit($form, &$form_state) {
+function buildmodes_submit($form, &$form_state) {
   $buildmodes = buildmodes_list_modes();
+
+  if (isset($form_state['values']['old_name'])) {
+    unset($buildmodes[$form_state['values']['old_name']]);
+  }
 
   $buildmodes[$form_state['values']['name']] = array(
     'title' => $form_state['values']['title'],
@@ -88,6 +131,40 @@ function buildmodes_new_submit($form, &$form_state) {
   );
 
   variable_set('buildmodes_modes', $buildmodes);
-  drupal_set_message(t('New build mode %name has been created.', array('%name' => $form_state['values']['title'])));
+
+  $t_args = array('%name' => $form_state['values']['name']);
+  watchdog('buildmodes', 'Build mode %name. has been saved', $t_args, WATCHDOG_NOTICE);
+
+  drupal_set_message(t('Build mode %name has been saved.', array('%name' => $form_state['values']['title'])));
   drupal_goto('admin/build/buildmodes');
+}
+
+/**
+ * Menu callback; delete a single build mode.
+ */
+function buildmodes_delete_confirm(&$form_state, $name) {
+  // TODO
+  $form['name'] = array('#type' => 'value', '#value' => $name);
+
+  $message = t('Are you sure you want to delete the build mode %name?', array('%name' => $name));
+
+  $caption = '<p>'. t('This action cannot be undone.') .'</p>';
+
+  return confirm_form($form, $message, 'admin/build/buildmodes', $caption, t('Delete'));
+}
+
+/**
+ * Process build mode delete confirm submissions.
+ */
+function buildmodes_delete_confirm_submit($form, &$form_state) {
+  $buildmodes = buildmodes_list_modes();
+  unset($buildmodes[$form_state['values']['name']]);
+  variable_set('buildmodes_modes', $buildmodes);
+
+  $t_args = array('%name' => $form_state['values']['name']);
+  drupal_set_message(t('The build mode %name has been deleted.', $t_args));
+  watchdog('buildmodes', 'Deleted build mode %name.', $t_args, WATCHDOG_NOTICE);
+
+  $form_state['redirect'] = 'admin/build/buildmodes';
+  return;
 }
