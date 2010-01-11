@@ -19,7 +19,7 @@ function buildmodes_menu() {
     'weight' => -10,
   );
   
-  $items['admin/build/buildmodes/new'] = array(
+  $items['admin/build/buildmodes/add'] = array(
     'title' => 'Add build mode',
     'description' => 'Add a new build mode',
     'page callback' => 'drupal_get_form',
@@ -28,18 +28,19 @@ function buildmodes_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'buildmodes.admin.inc',
   );
-  $items['admin/build/buildmodes/edit/%'] = array(
+  $items['admin/build/buildmodes/%buildmode/edit'] = array(
     'title' => 'Edit build mode',
     'description' => 'Edit a build mode',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('buildmodes_form', 4),
+    'page arguments' => array('buildmodes_form', 3),
     'access arguments' => array('administer buildmodes'),
     'file' => 'buildmodes.admin.inc',
   );
-  $items['admin/build/buildmodes/delete/%'] = array(
+  $items['admin/build/buildmodes/%buildmode/delete'] = array(
     'title' => 'Delete build mode',
     'description' => 'Delete a build mode',
-    'page arguments' => array('buildmodes_delete_confirm', 4),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('buildmodes_delete_confirm', 3),
     'access arguments' => array('administer buildmodes'),
     'file' => 'buildmodes.admin.inc',
   );
@@ -80,6 +81,20 @@ function buildmodes_list_modes($reset = FALSE) {
   }
 
   return $buildmodes;
+}
+
+/**
+ * Loads a single buildmode based on a system name
+ */
+function buildmode_load($name) {
+  $buildmodes = buildmodes_list_modes();
+  if ($buildmodes[$name]) {
+    $buildmodes[$name]['name'] = $name;
+    return $buildmodes[$name];
+  }
+  else {
+    return FALSE;
+  }
 }
 
 /**
