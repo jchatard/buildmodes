@@ -1,0 +1,170 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  buildmodes.admin.inc: n/a
+#  buildmodes.module: n/a
+#  buildmodes.info: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2010-01-11 19:48+0100\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: buildmodes.admin.inc:8 buildmodes.module:58;11 buildmodes.info:0
+msgid "Build modes"
+msgstr ""
+
+#: buildmodes.admin.inc:8
+msgid "Operations"
+msgstr ""
+
+#: buildmodes.admin.inc:13
+msgid "Views integration: <span class='admin-enabled'>On</span>"
+msgstr ""
+
+#: buildmodes.admin.inc:16
+msgid "Views integration: <span class='admin-disabled'>Off</span>"
+msgstr ""
+
+#: buildmodes.admin.inc:20
+msgid "System name:"
+msgstr ""
+
+#: buildmodes.admin.inc:21
+msgid "Template suggestion:"
+msgstr ""
+
+#: buildmodes.admin.inc:23
+msgid "edit"
+msgstr ""
+
+#: buildmodes.admin.inc:24
+msgid "delete"
+msgstr ""
+
+#: buildmodes.admin.inc:34 buildmodes.module:25
+msgid "Add a new build mode"
+msgstr ""
+
+#: buildmodes.admin.inc:48
+msgid "Build mode title"
+msgstr ""
+
+#: buildmodes.admin.inc:49
+msgid "The human readable build mode title"
+msgstr ""
+
+#: buildmodes.admin.inc:56
+msgid "Build mode system name"
+msgstr ""
+
+#: buildmodes.admin.inc:57
+msgid "The machine readable build mode name. This name must contain only lowercase letters, numbers, and underscores."
+msgstr ""
+
+#: buildmodes.admin.inc:72
+msgid "Views integration"
+msgstr ""
+
+#: buildmodes.admin.inc:73
+msgid "If this option is set you can use this build mode in Views option <em>Row style options</em> when <em>Node</em> is selected."
+msgstr ""
+
+#: buildmodes.admin.inc:75
+msgid "Enable Views integration"
+msgstr ""
+
+#: buildmodes.admin.inc:83
+msgid "Save"
+msgstr ""
+
+#: buildmodes.admin.inc:97
+msgid "The machine-readable name must contain only lowercase letters, numbers, and underscores."
+msgstr ""
+
+#: buildmodes.admin.inc:103
+msgid "The machine-readable name %name is reserved to Drupal core."
+msgstr ""
+
+#: buildmodes.admin.inc:107;110
+msgid "The machine-readable name %name is already taken."
+msgstr ""
+
+#: buildmodes.admin.inc:131
+msgid "Build mode %name has been saved."
+msgstr ""
+
+#: buildmodes.admin.inc:141
+msgid "Are you sure you want to delete the build mode %name?"
+msgstr ""
+
+#: buildmodes.admin.inc:143
+msgid "This action cannot be undone."
+msgstr ""
+
+#: buildmodes.admin.inc:145
+msgid "Delete"
+msgstr ""
+
+#: buildmodes.admin.inc:163
+msgid "The build mode %name has been deleted."
+msgstr ""
+
+#: buildmodes.admin.inc:129;164
+msgid "buildmodes"
+msgstr ""
+
+#: buildmodes.admin.inc:129
+msgid "Build mode %name. has been saved"
+msgstr ""
+
+#: buildmodes.admin.inc:164
+msgid "Deleted build mode %name."
+msgstr ""
+
+#: buildmodes.module:12
+msgid "List, edit, or add build modes to your nodes"
+msgstr ""
+
+#: buildmodes.module:18
+msgid "List"
+msgstr ""
+
+#: buildmodes.module:24
+msgid "Add build mode"
+msgstr ""
+
+#: buildmodes.module:33
+msgid "Edit build mode"
+msgstr ""
+
+#: buildmodes.module:34
+msgid "Edit a build mode"
+msgstr ""
+
+#: buildmodes.module:41
+msgid "Delete build mode"
+msgstr ""
+
+#: buildmodes.module:42
+msgid "Delete a build mode"
+msgstr ""
+
+#: buildmodes.info:0
+msgid "Allows user to define new build modes for nodes"
+msgstr ""
+
+#: buildmodes.info:0
+msgid "Content"
+msgstr ""
+
