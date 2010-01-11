@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /**
  * Lists all build modes user created
@@ -17,7 +18,7 @@ function buildmodes_overview() {
 
     $title       = '<strong>'. $mode['title'] .'</strong>';
     $system_name = '<small class=\'description\'>'. t('System name:') .' '. $key .' <br />';
-    $templates   = '<br />'. t('Template suggestions:') .' node-<em>content_type</em>-'. $key .', node-'. $key .'</small>';
+    $templates   = '<br />'. t('Template suggestion:') .' node-[content_type]-'. $key .'</small>';
 
     $operations  = l(t('edit'),   'admin/build/buildmodes/'. $key .'/edit') .' ';
     $operations .= l(t('delete'), 'admin/build/buildmodes/'. $key .'/delete');
@@ -30,7 +31,7 @@ function buildmodes_overview() {
   }
 
   $output = theme('table', $header, $rows, $attributes = array(), $caption = NULL);
-  $output .= l('+ '. t('Add a new build mode'), 'admin/build/buildmodes/new');
+  $output .= l('+ '. t('Add a new build mode'), 'admin/build/buildmodes/add');
 
   return $output;
 }
@@ -48,7 +49,7 @@ function buildmodes_form(&$form_state, $buildmode = NULL) {
     '#description' => t('The human readable build mode title'),
     '#default_value' => $buildmode['title'] ? $buildmode['title'] : '',
   );
-  
+
   $form['name'] = array(
     '#type' => 'textfield',
     '#required' => TRUE,
@@ -56,7 +57,7 @@ function buildmodes_form(&$form_state, $buildmode = NULL) {
     '#description' => t('The machine readable build mode name. This name must contain only lowercase letters, numbers, and underscores.'),
     '#default_value' => $buildmode['name'] ? $buildmode['name'] : '',
   );
-  
+
   if ($buildmode) {
     $form['old_name'] = array(
       '#type' => 'hidden',
@@ -64,7 +65,7 @@ function buildmodes_form(&$form_state, $buildmode = NULL) {
       '#value' => $buildmode['name'],
     );
   }
-  
+
   if (module_exists('views')) {
     $form['views'] = array(
       '#type' => 'checkboxes',
@@ -76,7 +77,7 @@ function buildmodes_form(&$form_state, $buildmode = NULL) {
       '#default_value' => array($buildmode['views style'] ? 'views style' : NULL),
     );
   }
-  
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
@@ -99,7 +100,6 @@ function buildmodes_validate($form, &$form_state) {
   $buildmodes = buildmodes_list_modes();
 
   if ($name == 'teaser' || $name == 'full') {
-    // TODO check for other modules defined build modes like rss, search, etc?
     form_set_error('name', t('The machine-readable name %name is reserved to Drupal core.', array('%name' => $name)));
   }
 

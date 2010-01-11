@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /**
  * Implementation of hook_menu()
@@ -102,9 +103,6 @@ function buildmode_load($name) {
  */
 function buildmodes_preprocess_node(&$vars) {
   if ($vars['build_mode']) {
-    // TODO prereg replace '_' -> '-'
-    // populate build_mode with teaser and full?
-    $vars['template_files'][] = 'node-'. $vars['build_mode'];
     $vars['template_files'][] = 'node-'. $vars['type'] .'-'. $vars['build_mode'];
   }
 }

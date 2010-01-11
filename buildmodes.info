@@ -1,3 +1,4 @@
+; $Id$
 name = Build modes
 description = Allows user to define new build modes for nodes
 package = Content
